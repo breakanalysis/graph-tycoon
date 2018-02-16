@@ -8,7 +8,7 @@ class Edge:
         start (Node): origin node of the edge.
         end (Node): destination node of the edge.
         speed (float): speed limit of edge.
-        cars (set): set of cars on the edge. 
+        cars (deque): queue of pairs (car, dist) on the edge. cars enter on the left. 
         length (float): the length of the edge.
         queue (deque): cars queued for entering this edge.
     """
@@ -16,11 +16,7 @@ class Edge:
         self.start = start
         self.end = end
         self.speed = speed
-        self.cars = []
+        self.cars = deque([])
         self.length = math.sqrt((start.x - end.x)**2 + (start.y - end.y)**2)
         self.queue = deque([])
-
-    def entrance_margin(self, car_length):
-        last_car = self.cars[-1]
-        return last_car.dist - car_length
         

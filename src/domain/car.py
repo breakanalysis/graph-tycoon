@@ -3,9 +3,8 @@ class Car:
 
     Attributes:
         edge (Edge): current edge car is on.
-        dist (float): traveled distance of edge.
+        state (str): car's state ['moving' | 'queued' | 'exiting']
     """
-    def __init__(self, edge, dist):
+    def __init__(self, edge, state):
         self.edge = edge
-        self.dist = dist
-        
+        self.state = state
