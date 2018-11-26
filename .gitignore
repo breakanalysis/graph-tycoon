@@ -2,3 +2,5 @@
 *.html
 *.pyc
 flymd.md
+.idea
+*.iml
