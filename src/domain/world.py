@@ -44,7 +44,8 @@ class World:
         if len(edge.cars) == 0:
             return True
         last_car = edge.cars[-1]
-        return last_car.dist > 1.5*car_length
+        return last_car.dist > 1.5 * self.car_length
+
     def get_edge(self, start, end):
         node = self.nodes[start]
         return node.outs[end]
@@ -68,7 +69,7 @@ class World:
                     if (new_dist >= edge.length):
                         new_dist = edge.length
                         car.state = 'queued'
-                        transit_edge = edge.end.outs.values()[0]
+                        transit_edge = list(edge.end.outs.values())[0]
                         if (car in decisions):
                             transit_edge = decisions[car]
                         transit_edge.queue.appendleft(car)
@@ -84,8 +85,8 @@ class World:
 
     def to_string(self):
         s = ""
-        for start_name, start_node in self.nodes.iteritems():
-            for end_name, edge in start_node.outs.iteritems():
+        for start_name, start_node in self.nodes.items():
+            for end_name, edge in start_node.outs.items():
                 car_dists = ", ".join(map(lambda x: x[0].state+":"+str(x[1]), edge.cars))
                 s += start_name + " --> (" + car_dists + ") --> " + end_name + '\n'
         return s

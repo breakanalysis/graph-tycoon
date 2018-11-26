@@ -12,7 +12,7 @@ hello.add_edge("2", "3", 0.05)
 hello.add_edge("3", "4", 0.05)
 hello.add_edge("4", "5", 0.05)
 
-hello.add_car(hello.get_edge("1","2"), 'moving')
+hello.add_car(hello.get_edge("1", "2"), 'moving')
 
 hello.step(1.0, {})
 
