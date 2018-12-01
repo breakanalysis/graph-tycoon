@@ -2,6 +2,7 @@ from .car import *
 from .node import *
 from .edge import *
 from collections import deque
+import random
 
 CAR_LENGTH = 0.1
 
@@ -61,7 +62,8 @@ class World:
             new_car_distance_pairs = deque([])
             next_dist = 99999999.0
             for car, dist in reversed(edge.cars):
-                transit_edge = list(edge.end.outs.values())[0]
+                choices = list(edge.end.outs.values())
+                transit_edge = choices[random.randint(0, len(choices) - 1)]
                 if car in decisions:
                     transit_edge = decisions[car]
                 speed = car.edge.speed
