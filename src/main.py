@@ -22,6 +22,8 @@ hello.add_edge("4", "5", 0.01)
 hello.add_edge("5", "1", 0.01)
 
 hello.add_car(hello.get_edge("1", "2"), 'moving')
+hello.add_car(hello.get_edge("1", "2"), 'moving')
+hello.add_car(hello.get_edge("5", "1"), 'moving')
 # steps = 0
 # while True:
 #     hello.step(1.0, {})

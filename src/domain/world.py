@@ -35,7 +35,7 @@ class World:
 
     def add_car(self, edge, state):
         assert len(edge.cars)*CAR_LENGTH < edge.length
-        dist = len(edge.cars)*CAR_LENGTH
+        dist = 2.5 * len(edge.cars)*CAR_LENGTH
         car = Car(edge, state)
         edge.cars.append((car, dist))
         self.cars.add(car)
@@ -44,7 +44,7 @@ class World:
         if len(edge.cars) == 0:
             return True
         last_car = edge.cars[-1]
-        return last_car.dist > 1.5 * CAR_LENGTH
+        return last_car[1] > 1.5 * CAR_LENGTH
 
     def get_edge(self, start, end):
         node = self.nodes[start]
