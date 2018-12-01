@@ -3,6 +3,8 @@ from .node import *
 from .edge import *
 from collections import deque
 
+CAR_LENGTH = 0.4
+
 class World:
     """Abstract graph world with Nodes, Edges and Cars.
 
@@ -12,11 +14,10 @@ class World:
         edges (set): set of all edges.
         car_length (float): length of a car.
     """
-    def __init__(self, car_length):
+    def __init__(self):
         self.nodes = {}
         self.cars = set()
         self.edges = set()
-        self.car_length = car_length
 
     def add_node(self, name, x, y):
         node = Node(name, x, y)
@@ -33,8 +34,8 @@ class World:
         self.edges.add(edge)
 
     def add_car(self, edge, state):
-        assert len(edge.cars)*self.car_length < edge.length
-        dist = len(edge.cars)*self.car_length
+        assert len(edge.cars)*CAR_LENGTH < edge.length
+        dist = len(edge.cars)*CAR_LENGTH
         car = Car(edge, state)
         edge.cars.append((car, dist))
         self.cars.add(car)
@@ -43,7 +44,7 @@ class World:
         if len(edge.cars) == 0:
             return True
         last_car = edge.cars[-1]
-        return last_car.dist > 1.5 * self.car_length
+        return last_car.dist > 1.5 * CAR_LENGTH
 
     def get_edge(self, start, end):
         node = self.nodes[start]
@@ -55,7 +56,7 @@ class World:
                 entering = edge.queue.pop()
                 entering.state = 'exiting'
                 entering.edge = edge
-                edge.cars.appendleft((entering, -self.car_length))
+                edge.cars.appendleft((entering, -CAR_LENGTH))
         for edge in self.edges:
             new_car_distance_pairs = deque([])
             next_dist = 99999999.0
@@ -67,10 +68,10 @@ class World:
                 if car.is_exiting():
                     speed = min(speed, transit_edge.speed)
                 new_dist = speed * time + dist
-                new_dist = min(new_dist, next_dist - 1.5*self.car_length)
+                new_dist = min(new_dist, next_dist - 1.5*CAR_LENGTH)
                 if car.is_moving():
-                    if new_dist >= edge.length - self.car_length:
-                        new_dist = edge.length - self.car_length
+                    if new_dist >= edge.length - CAR_LENGTH:
+                        new_dist = edge.length - CAR_LENGTH
                         car.state = 'queued'
                         transit_edge.queue.appendleft(car)
                     new_car_distance_pairs.appendleft((car, new_dist))
