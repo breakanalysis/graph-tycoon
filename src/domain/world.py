@@ -3,7 +3,7 @@ from .node import *
 from .edge import *
 from collections import deque
 
-CAR_LENGTH = 0.4
+CAR_LENGTH = 0.1
 
 class World:
     """Abstract graph world with Nodes, Edges and Cars.

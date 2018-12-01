@@ -12,7 +12,7 @@ hello = World()
 hello.add_node("1", 0.1, 0.3)
 hello.add_node("2", 0.4, 0.1)
 hello.add_node("3", 0.8, 0.4)
-hello.add_node("4", 0.6, 0.6)
+hello.add_node("4", 0.6, 0.8)
 hello.add_node("5", 0.3, 0.4)
 
 hello.add_edge("1", "2", 0.01)
@@ -31,11 +31,11 @@ hello.add_car(hello.get_edge("1", "2"), 'moving')
 import pygame
 
 pygame.init()
-screen = pygame.display.set_mode((400, 300))
+HEIGHT = WIDTH = 1000
+screen = pygame.display.set_mode((HEIGHT, WIDTH))
 clock = pygame.time.Clock()
 
 done = False
-TIME = 1/60
 
 while not done:
     for event in pygame.event.get():
@@ -45,20 +45,20 @@ while not done:
     screen.fill(black)
     for node in hello.nodes.values():
         for edge in node.outs.values():
-            sy = 400 * edge.start.y
-            sx = 300 * edge.start.x
-            ey = 400 * edge.end.y
-            ex = 300 * edge.end.x
+            sy = HEIGHT * edge.start.y
+            sx = WIDTH * edge.start.x
+            ey = HEIGHT * edge.end.y
+            ex = WIDTH * edge.end.x
             dy = ey - sy
             dx = ex - sx
             L = math.sqrt(dx**2 + dy**2)
-            dy /= L
-            dx /= L
-            pygame.draw.line(screen, pink, (sy, sx), (ey, ex), 3)
+            dy = dy * HEIGHT / L
+            dx = dx * WIDTH / L
+            pygame.draw.line(screen, pink, (sy, sx), (ey, ex), int(WIDTH/100))
             for car, dist in edge.cars:
                 car_start = (sy + dy * dist, sx + dx * dist)
-                car_end = (ey + dy * (dist + CAR_LENGTH), ex)
-                pygame.draw.line(screen, pink, car_start, car_end, 12)
+                car_end = (sy + dy * (dist + CAR_LENGTH), sx + dx * (dist + CAR_LENGTH))
+                pygame.draw.line(screen, green, car_start, car_end, int(WIDTH/30))
     clock.tick(20)
     pygame.display.flip()
 
