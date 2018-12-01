@@ -5,7 +5,7 @@ from collections import deque
 import random
 
 CAR_LENGTH = 0.1
-
+CROSSING_MARGIN = 0.75
 class World:
     """Abstract graph world with Nodes, Edges and Cars.
 
@@ -42,10 +42,7 @@ class World:
         self.cars.add(car)
     
     def entrance_free(self, edge):
-        if len(edge.cars) == 0:
-            return True
-        last_car = edge.cars[-1]
-        return last_car[1] > 1.5 * CAR_LENGTH
+        return len(edge.cars) == 0 or edge.cars[0][1] > CROSSING_MARGIN * CAR_LENGTH
 
     def get_edge(self, start, end):
         node = self.nodes[start]
@@ -71,6 +68,7 @@ class World:
                     speed = min(speed, transit_edge.speed)
                 new_dist = speed * time + dist
                 new_dist = min(new_dist, next_dist - 1.5*CAR_LENGTH)
+                next_dist = new_dist
                 if car.is_moving():
                     if new_dist >= edge.length - CAR_LENGTH:
                         new_dist = edge.length - CAR_LENGTH
