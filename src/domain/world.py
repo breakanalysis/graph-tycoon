@@ -19,8 +19,7 @@ class World:
         self.car_length = car_length
 
     def add_node(self, name, x, y):
-        num_nodes = len(self.nodes)
-        node = Node(x, y)
+        node = Node(name, x, y)
         self.nodes[name] = node
 
     def add_edge(self, start_name, end_name, speed):
@@ -35,7 +34,7 @@ class World:
 
     def add_car(self, edge, state):
         assert len(edge.cars)*self.car_length < edge.length
-        dist =  len(edge.cars)*self.car_length
+        dist = len(edge.cars)*self.car_length
         car = Car(edge, state)
         edge.cars.append((car, dist))
         self.cars.add(car)
@@ -51,44 +50,46 @@ class World:
         return node.outs[end]
 
     def step(self, time, decisions):
-#        import pdb; pdb.set_trace()
         for edge in self.edges:
             if len(edge.queue) > 0 and self.entrance_free(edge):
                 entering = edge.queue.pop()
                 entering.state = 'exiting'
                 entering.edge = edge
-                entering_dist = 0
-                edge.queue.appendleft((entering,entering_dist))
+                edge.cars.appendleft((entering, -self.car_length))
+        for edge in self.edges:
             new_car_distance_pairs = deque([])
-            next_car = None
             next_dist = 99999999.0
             for car, dist in reversed(edge.cars):
-                new_dist = car.edge.speed * time + dist
-                new_dist = max(new_dist, next_dist - 1.5*self.car_length)
-                if (car.state == 'moving'):
-                    if (new_dist >= edge.length):
-                        new_dist = edge.length
+                transit_edge = list(edge.end.outs.values())[0]
+                if car in decisions:
+                    transit_edge = decisions[car]
+                speed = car.edge.speed
+                if car.is_exiting():
+                    speed = min(speed, transit_edge.speed)
+                new_dist = speed * time + dist
+                new_dist = min(new_dist, next_dist - 1.5*self.car_length)
+                if car.is_moving():
+                    if new_dist >= edge.length - self.car_length:
+                        new_dist = edge.length - self.car_length
                         car.state = 'queued'
-                        transit_edge = list(edge.end.outs.values())[0]
-                        if (car in decisions):
-                            transit_edge = decisions[car]
                         transit_edge.queue.appendleft(car)
                     new_car_distance_pairs.appendleft((car, new_dist))
-                elif (car.state == 'exiting'):
-                    if (new_dist >= edge.length + self.car_length):
+                elif car.is_exiting():
+                    if new_dist >= edge.length:
                         car.state = 'moving'
-                elif (car.state == 'queued'):
+                    else:
+                        new_car_distance_pairs.appendleft((car, new_dist))
+                elif car.is_queued():
                     new_car_distance_pairs.appendleft((car, dist))
                 else:
                     raise Exception('unknown state: ' + car.state)
             edge.cars = new_car_distance_pairs
 
-    def to_string(self):
+    def __str__(self):
         s = ""
-        for start_name, start_node in self.nodes.items():
-            for end_name, edge in start_node.outs.items():
-                car_dists = ", ".join(map(lambda x: x[0].state+":"+str(x[1]), edge.cars))
-                s += start_name + " --> (" + car_dists + ") --> " + end_name + '\n'
+        for _, start_node in self.nodes.items():
+            for _, edge in start_node.outs.items():
+                s += str(edge) + '\n'
         return s
 
 

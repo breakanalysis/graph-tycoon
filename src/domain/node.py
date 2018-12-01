@@ -7,7 +7,8 @@ class Node:
         ins (dict): dict of incoming edges. key = source name, val = incoming edge.
         outs (dict): dict of outgoing edges. key = destinate name, val = outgoing edge.
     """
-    def __init__(self, x, y):
+    def __init__(self, name, x, y):
+        self.name = name
         self.x = x
         self.y = y
         self.ins = {}

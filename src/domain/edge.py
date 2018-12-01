@@ -19,4 +19,9 @@ class Edge:
         self.cars = deque([])
         self.length = math.sqrt((start.x - end.x)**2 + (start.y - end.y)**2)
         self.queue = deque([])
-        
+
+    def __str__(self):
+        return "q:{}, [{} --> ({}) --> {}]".format(len(self.queue), self.start.name, self.cars_str(), self.end.name)
+
+    def cars_str(self):
+        return ", ".join(map(lambda x: "{}: {}".format(x[0].state, x[1]), self.cars))
