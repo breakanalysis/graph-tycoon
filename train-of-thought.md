@@ -1,7 +1,7 @@
-#Train of thought
+# Train of thought
 This file describes my train of thought during the design and development of this repo.
 
-##Main ideas
+## Main ideas
 * Make simplistic trafic simulator based on the following assumptions
   * The driving landscape is a planar directed graph
   * All vehicles are equal length line segments
@@ -11,7 +11,7 @@ This file describes my train of thought during the design and development of thi
   * Drivers know about some or all of the other cars' positions
 * Use NEAT and possibly Deep-Q learning to train an AI to navigate efficiently
 
-##Refining problem formulation and algos
+## Refining problem formulation and algos
 * The tricky part of the simulation it self seems to be 'contention' dynamics which govern the state update function
 * First idea is to limit the movement of a car by the car in front
   * However the blocking car can also be on the next road
