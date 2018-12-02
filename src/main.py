@@ -1,4 +1,5 @@
 from domain.world import *
+from graph_generator import generate_world
 
 red = (255, 0, 0)
 green = (0, 255, 0)
@@ -37,6 +38,8 @@ hello.add_car(hello.get_edge("2", "5"), 'moving')
 hello.add_car(hello.get_edge("2", "5"), 'moving')
 hello.add_car(hello.get_edge("4", "5"), 'moving')
 hello.add_car(hello.get_edge("6", "1"), 'moving')
+
+hello = generate_world()
 # steps = 0
 # while True:
 #     hello.step(1.0, {})
@@ -66,7 +69,7 @@ while not done:
             ex = SCALE * edge.end.x
             dy = ey - sy
             dx = ex - sx
-            L = math.sqrt(dx**2 + dy**2)
+            L = edge.length
             dy = dy / L
             dx = dx / L
             pygame.draw.line(screen, pink, (sy, sx), (ey, ex), int(SCALE/100))
