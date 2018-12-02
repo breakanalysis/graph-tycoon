@@ -1,5 +1,5 @@
 # Graph Tycoon
-## A simulator for car trafic on a directed graph in the 2D plane
+## A simple traffic simulator on directed planar graph maps
 
 ### Requirements
 * python 3.5+
