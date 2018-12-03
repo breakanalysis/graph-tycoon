@@ -69,7 +69,7 @@ while not done:
             ex = SCALE * edge.end.x
             dy = ey - sy
             dx = ex - sx
-            L = edge.length
+            L = edge.length * SCALE 
             dy = dy / L
             dx = dx / L
             pygame.draw.line(screen, pink, (sy, sx), (ey, ex), int(SCALE/100))
