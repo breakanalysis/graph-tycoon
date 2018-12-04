@@ -48,6 +48,9 @@ class World:
         node = self.nodes[start]
         return node.outs[end]
 
+    def has_edge(self, start, end):
+        return start in self.nodes and end in self.nodes[start].outs
+
     def step(self, time, decisions):
         for edge in self.edges:
             if len(edge.queue) > 0 and self.entrance_free(edge):

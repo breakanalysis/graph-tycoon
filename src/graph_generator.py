@@ -2,7 +2,7 @@ from domain.edge import *
 from domain.world import World, CAR_LENGTH
 import numpy as np
 
-DEGREE_DISTRIBUTION = [10000, 15, 10, 5]
+DEGREE_DISTRIBUTION = [100, 15, 10, 5]
 SPEED_DISTRIBUTION = [0.01, 0.002]
 CARS = 12
 NODES = 8
@@ -18,15 +18,13 @@ def generate_world(nodes=NODES, degree_distribution=DEGREE_DISTRIBUTION,
     for node in range(nodes):
         node_name = str(node)
         in_degree = _sample_degree(degree_distribution)
-        out_degree = _sample_degree(degree_distribution)
-        in_nodes, out_nodes = _sample_connecting_nodes(node, nodes, in_degree, out_degree)
-        assert not (set(in_nodes) & set(out_nodes))
+        in_nodes = _sample_connecting_nodes(node, nodes, in_degree, world)
         for other_node in in_nodes:
             speed = _sample_speed(speed_distribution)
             world.add_edge(other_node, node_name, speed)
-        for other_node in out_nodes:
-            speed = _sample_speed(speed_distribution)
-            world.add_edge(node_name, other_node, speed)
+        safety_out_node = _sample_connecting_nodes(node, nodes, 1, world)[0]
+        speed = _sample_speed(speed_distribution)
+        world.add_edge(node_name, safety_out_node, speed)
     edges = list(world.edges)
     while cars > 0:
         edge = np.random.choice(edges)
@@ -54,11 +52,9 @@ def _sample_degree(dist):
 def _sample_speed(dist):
     return max(0, dist[0] + dist[1] * np.random.randn())
 
-def _sample_connecting_nodes(node, nodes, in_degree, out_degree):
-    node_offsets = np.random.choice(range(1, nodes), size=in_degree + out_degree, replace=False)
-    node_offsets_in = np.random.choice(node_offsets, size=in_degree, replace=False)
-    node_offsets_out = set(node_offsets) - set(node_offsets_in)
-    return _offsets_to_nodes(node, nodes, node_offsets_in), _offsets_to_nodes(node, nodes, node_offsets_out)
-
-def _offsets_to_nodes(node, nodes, node_offsets):
-    return [str((node + node_offset) % nodes) for node_offset in node_offsets]
+def _sample_connecting_nodes(node, nodes, degree, world):
+    node_name = str(node)
+    all_names = [str(n) for n in range(nodes)]
+    eligible_nodes = [n for n in all_names if n is not node_name\
+                      and not world.has_edge(node_name, n) and not world.has_edge(n, node_name)]
+    return np.random.choice(eligible_nodes, size=degree, replace=False)
