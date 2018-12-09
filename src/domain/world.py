@@ -3,6 +3,7 @@ from .node import *
 from .edge import *
 from collections import deque
 import random
+from typing import Dict, Tuple
 
 CAR_LENGTH = 0.1
 CROSSING_MARGIN = 0.75
@@ -20,11 +21,11 @@ class World:
         self.cars = set()
         self.edges = set()
 
-    def add_node(self, name, x, y):
+    def add_node(self, name: str, x: float, y: float) -> None:
         node = Node(name, x, y)
         self.nodes[name] = node
 
-    def add_edge(self, start_name, end_name, speed):
+    def add_edge(self, start_name: str, end_name: str, speed: float) -> None:
         assert start_name in self.nodes
         assert end_name in self.nodes
         start = self.nodes[start_name]
@@ -34,24 +35,24 @@ class World:
         end.ins[start_name] = edge
         self.edges.add(edge)
 
-    def add_car(self, edge, state):
+    def add_car(self, edge: Edge, state: str) -> None:
         assert len(edge.cars)*CAR_LENGTH < edge.length
         dist = 2.5 * len(edge.cars)*CAR_LENGTH
         car = Car(edge, state)
         edge.cars.append((car, dist))
         self.cars.add(car)
     
-    def entrance_free(self, edge):
+    def entrance_free(self, edge: Edge) -> bool:
         return len(edge.cars) == 0 or edge.cars[0][1] > CROSSING_MARGIN * CAR_LENGTH
 
-    def get_edge(self, start, end):
+    def get_edge(self, start: str, end: str) -> Edge:
         node = self.nodes[start]
         return node.outs[end]
 
-    def has_edge(self, start, end):
+    def has_edge(self, start: str, end: str) -> bool:
         return start in self.nodes and end in self.nodes[start].outs
 
-    def step(self, time, decisions):
+    def step(self, time: float, decisions: Dict[Car, Edge]) -> None:
         for edge in self.edges:
             if len(edge.queue) > 0 and self.entrance_free(edge):
                 entering = edge.queue.pop()
