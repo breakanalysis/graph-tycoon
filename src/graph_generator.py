@@ -2,7 +2,7 @@ from domain.edge import *
 from domain.world import World, CAR_LENGTH
 import numpy as np
 
-DEGREE_DISTRIBUTION = [100, 15, 10, 5]
+DEGREE_DISTRIBUTION = [50, 15, 10, 5]
 SPEED_DISTRIBUTION = [0.01, 0.002]
 CARS = 12
 NODES = 8
@@ -40,12 +40,12 @@ def generate_world(nodes=NODES, degree_distribution=DEGREE_DISTRIBUTION,
     return world
 
 def _generate_coord(nodes):
-    eps = 0.2 / math.sqrt(nodes)
+    eps = 0.8 / math.sqrt(nodes)
     coord = []
     while len(coord) < nodes:
-        p = np.random.uniform(0, 1, 2)
-        while any((np.linalg.norm(p - c)  < eps for c in coord)):
-            p = np.random.uniform(0, 1, 2)
+        p = None
+        while p is None or any((np.linalg.norm(p - c)  < eps for c in coord)):
+            p = np.random.uniform(0.05, 0.95, 2)
         coord.append(p)
     return coord
 
