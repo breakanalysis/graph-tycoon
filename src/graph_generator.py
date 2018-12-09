@@ -17,14 +17,19 @@ def generate_world(nodes=NODES, degree_distribution=DEGREE_DISTRIBUTION,
         world.add_node(str(node), *coord[node])
     for node in range(nodes):
         node_name = str(node)
-        in_degree = _sample_degree(degree_distribution)
-        in_nodes = _sample_connecting_nodes(node, nodes, in_degree, world)
+        in_degree = len([n for n in world.nodes if world.has_edge(n, node_name)])
+        # there are nodes - 1 other nodes, and we reserve one for out edge
+        in_degree_missing = max(0, min(nodes - 2, _sample_degree(degree_distribution) - in_degree))
+        in_nodes = _sample_connecting_nodes(node, nodes, in_degree_missing, world)
         for other_node in in_nodes:
             speed = _sample_speed(speed_distribution)
             world.add_edge(other_node, node_name, speed)
-        safety_out_node = _sample_connecting_nodes(node, nodes, 1, world)[0]
-        speed = _sample_speed(speed_distribution)
-        world.add_edge(node_name, safety_out_node, speed)
+        out_degree = len([n for n in world.nodes if world.has_edge(node_name, n)])
+        # only sample an out edge if the node doesnt already have an out edge
+        if out_degree == 0:
+            safety_out_node = _sample_connecting_nodes(node, nodes, 1, world)[0]
+            speed = _sample_speed(speed_distribution)
+            world.add_edge(node_name, safety_out_node, speed)
     edges = list(world.edges)
     while cars > 0:
         edge = np.random.choice(edges)
@@ -55,6 +60,8 @@ def _sample_speed(dist):
 def _sample_connecting_nodes(node, nodes, degree, world):
     node_name = str(node)
     all_names = [str(n) for n in range(nodes)]
-    eligible_nodes = [n for n in all_names if n is not node_name\
+    eligible_nodes = [n for n in all_names if n != node_name
                       and not world.has_edge(node_name, n) and not world.has_edge(n, node_name)]
+    if not eligible_nodes:
+        return []
     return np.random.choice(eligible_nodes, size=degree, replace=False)
