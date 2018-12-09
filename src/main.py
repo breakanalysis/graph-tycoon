@@ -45,6 +45,7 @@ hello = generate_world()
 #     hello.step(1.0, {})
 #     steps += 1
 #     print(hello)
+assert hello.validate_reachability()
 
 import pygame
 

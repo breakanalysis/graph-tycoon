@@ -90,6 +90,32 @@ class World:
                     raise Exception('unknown state: ' + car.state)
             edge.cars = new_car_distance_pairs
 
+    def validate_reachability(self):
+        return self._no_short_loop() and self._can_get_in() and self._can_get_out()
+
+    def _no_short_loop(self):
+        for node1 in self.nodes:
+            for node2 in self.nodes:
+                if node1 == node2:
+                    if self.has_edge(node1, node2):
+                        return False
+                else:
+                    if self.has_edge(node1, node2) and self.has_edge(node2, node1):
+                        return False
+        return True
+
+    def _can_get_out(self):
+        for node1 in self.nodes:
+            if not any([self.has_edge(node1, node2) for node2 in self.nodes]):
+                return False
+        return True
+
+    def _can_get_in(self):
+        for node1 in self.nodes:
+            if not any([self.has_edge(node2, node1) for node2 in self.nodes]):
+                return False
+        return True
+
     def __str__(self):
         s = ""
         for _, start_node in self.nodes.items():
